@@ -49,7 +49,8 @@ public class LexerTest
     public void testLexerValidInputStringWithWhiteSpaceAndOtherChars() throws IOException
     {
         OutputStream outputStream =
-                lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE_AND_OTHER_CHARS.getBytes()));
+                lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE_AND_OTHER_CHARS
+                        .getBytes()));
         assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, convertOutputStreamToString(outputStream));
     }
 
