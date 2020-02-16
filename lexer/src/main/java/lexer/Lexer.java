@@ -13,6 +13,14 @@ import java.io.OutputStream;
  */
 class Lexer
 {
+    /**
+     * Strips any characters not recognized by Brainfuck (as dictated by the BrainfuckChar enum), and returns a
+     * legal output for use by the Parser.
+     *
+     * @param inputStream The input stream provided to the Lexer.
+     * @return An Outputstream with the only legal characters.
+     * @throws IOException Thrown if there is an issue reading from or closing the input stream.
+     */
     OutputStream stripNonBrainfuckChars(InputStream inputStream) throws IOException
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -22,13 +30,16 @@ class Lexer
 
         try (inputStream)
         {
-            // Iterate through the bytes of the input stream.
+            // Iterate through the bytes of the input stream via a buffer.
             while ((read = inputStream.read(buffer)) != -1)
             {
+                // Iterate through each byte that was read in the buffer.
                 for (int i = 0; i < read; i++)
                 {
+                    // Cast the current byte read into the buffer to a char.
                     char currentChar = (char)buffer[i];
 
+                    // If the char is a valid Brainfuck char, write the byte to the output stream.
                     if (isValidBrainfuckChar(currentChar))
                     {
                         outputStream.write(buffer[i]);
@@ -40,7 +51,13 @@ class Lexer
         return outputStream;
     }
 
-    private boolean isValidBrainfuckChar(char currentChar)
+    /**
+     * Checks if the given character is a valid Brainfuck character (as dictated by the BrainfuckChar enum).
+     *
+     * @param currentChar The current char.
+     * @return True if the char is recognized, false if not.
+     */
+    boolean isValidBrainfuckChar(char currentChar)
     {
         for (BrainfuckChar brainfuckChar : BrainfuckChar.values())
         {
