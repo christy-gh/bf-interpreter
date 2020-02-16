@@ -68,7 +68,7 @@ public class LexerTest
     }
 
     @Test
-    public void testLexerInvalidChars()
+    public void testLexerAllBytes()
     {
         // Iterate through every possible byte value.
         for (int i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++)
@@ -80,8 +80,8 @@ public class LexerTest
 
             for (BrainfuckChar brainfuckChar : BrainfuckChar.values())
             {
-                System.out.println("brainfuckChar byte value: " + (byte)brainfuckChar.getValue());
-                if (b == (byte)brainfuckChar.getValue())
+                System.out.println("brainfuckChar byte value: " + brainfuckChar.getByteValue());
+                if (b == brainfuckChar.getByteValue())
                 {
                     isLegal = true;
                 }

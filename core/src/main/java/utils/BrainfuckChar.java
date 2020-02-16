@@ -46,4 +46,14 @@ public enum BrainfuckChar
     {
         return value;
     }
+
+    /**
+     * Returns the byte value of an enum entry char.
+     *
+     * @return The byte value of an enum entry char.
+     */
+    public byte getByteValue()
+    {
+        return (byte)value;
+    }
 }
