@@ -4,11 +4,11 @@ import org.junit.Test;
 import utils.BrainfuckChar;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import static org.junit.Assert.*;
+import static utils.TestUtils.convertOutputStreamToString;
 
 public class LexerTest
 {
@@ -57,14 +57,14 @@ public class LexerTest
     @Test
     public void testLexerValidChars()
     {
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INC_POINTER.getValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.DEC_POINTER.getValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INC_BYTE_AT_POINTER.getValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.DEC_BYTE_AT_POINTER.getValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.OUTPUT_BYTE_AT_POINTER.getValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INPUT_BYTE_TO_POINTER.getValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INC_POINTER.getCharValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.DEC_POINTER.getCharValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INC_BYTE_AT_POINTER.getCharValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.DEC_BYTE_AT_POINTER.getCharValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.OUTPUT_BYTE_AT_POINTER.getCharValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INPUT_BYTE_TO_POINTER.getCharValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getCharValue()));
+        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getCharValue()));
     }
 
     @Test
@@ -89,16 +89,5 @@ public class LexerTest
 
             assertEquals(isLegal, lexer.isValidBrainfuckChar((char)b));
         }
-    }
-
-    /**
-     * Converts the returned output stream to a string to compare with the expected value.
-     *
-     * @param outputStream The output stream returned by the Lexer.
-     * @return The string value of the output stream.
-     */
-    private String convertOutputStreamToString(OutputStream outputStream)
-    {
-        return new String(((ByteArrayOutputStream)outputStream).toByteArray());
     }
 }
