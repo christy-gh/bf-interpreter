@@ -5,7 +5,6 @@ import utils.HelperFunctions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -78,7 +77,8 @@ public class Parser
                         unmatchedBrackets++;
                     }
                     // Otherwise if the character at the bracketIndex is ']':
-                    else if (inputString.charAt(bracketIndex) == BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getCharValue())
+                    else if (inputString.charAt(bracketIndex) ==
+                            BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getCharValue())
                     {
                         // Decrement the number of unmatched brackets by 1.
                         unmatchedBrackets--;
