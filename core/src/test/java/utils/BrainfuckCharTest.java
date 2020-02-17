@@ -54,14 +54,14 @@ public class BrainfuckCharTest
     @Test
     public void testGetValue()
     {
-        assertEquals(TEST_INC_POINTER, BrainfuckChar.INC_POINTER.getValue());
-        assertEquals(TEST_DEC_POINTER, BrainfuckChar.DEC_POINTER.getValue());
-        assertEquals(TEST_INC_BYTE_AT_POINTER, BrainfuckChar.INC_BYTE_AT_POINTER.getValue());
-        assertEquals(TEST_DEC_BYTE_AT_POINTER, BrainfuckChar.DEC_BYTE_AT_POINTER.getValue());
-        assertEquals(TEST_OUTPUT_BYTE_AT_POINTER, BrainfuckChar.OUTPUT_BYTE_AT_POINTER.getValue());
-        assertEquals(TEST_INPUT_BYTE_TO_POINTER, BrainfuckChar.INPUT_BYTE_TO_POINTER.getValue());
-        assertEquals(TEST_JUMP_FORWARD_IF_BYTE_IS_ZERO, BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getValue());
+        assertEquals(TEST_INC_POINTER, BrainfuckChar.INC_POINTER.getCharValue());
+        assertEquals(TEST_DEC_POINTER, BrainfuckChar.DEC_POINTER.getCharValue());
+        assertEquals(TEST_INC_BYTE_AT_POINTER, BrainfuckChar.INC_BYTE_AT_POINTER.getCharValue());
+        assertEquals(TEST_DEC_BYTE_AT_POINTER, BrainfuckChar.DEC_BYTE_AT_POINTER.getCharValue());
+        assertEquals(TEST_OUTPUT_BYTE_AT_POINTER, BrainfuckChar.OUTPUT_BYTE_AT_POINTER.getCharValue());
+        assertEquals(TEST_INPUT_BYTE_TO_POINTER, BrainfuckChar.INPUT_BYTE_TO_POINTER.getCharValue());
+        assertEquals(TEST_JUMP_FORWARD_IF_BYTE_IS_ZERO, BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getCharValue());
         assertEquals(TEST_JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO, BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO
-                .getValue());
+                .getCharValue());
     }
 }

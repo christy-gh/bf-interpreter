@@ -42,7 +42,7 @@ public enum BrainfuckChar
      *
      * @return The char value of the enum entry.
      */
-    public char getValue()
+    public char getCharValue()
     {
         return value;
     }
