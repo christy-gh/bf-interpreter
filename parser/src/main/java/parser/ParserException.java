@@ -1,4 +1,4 @@
-package parser.exception;
+package parser;
 
 /**
  * Wrapper class for exceptions encountered in the preparser.

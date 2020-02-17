@@ -17,9 +17,10 @@ public class Parser
      *
      * @param inputString The input string.
      * @return True if there were no errors parsing the
-     * @throws IOException Thrown if the output doesn't match.
+     * @throws ParserException Thrown if an exception is encountered when parsing or if the parsed output doesn't match
+     *                         the input.
      */
-    boolean isInputValidBrainfuck(String inputString) throws IOException
+    boolean isInputValidBrainfuck(String inputString) throws ParserException
     {
         OutputStream parsedOutputStream = parse(inputString, new ByteArrayOutputStream());
 
@@ -30,7 +31,7 @@ public class Parser
         }
         else
         {
-            throw new IOException("Parsed output did not match input.");
+            throw new ParserException("Parsed output did not match input.");
         }
     }
 
@@ -40,10 +41,10 @@ public class Parser
      * @param inputString  The Brainfuck input as a string.
      * @param outputStream The output stream for the parser to write output to.
      * @return The parser output stream.
-     * @throws IOException Thrown if there is an issue writing to the output stream, or if any parser exceptions are
-     *                     thrown.
+     * @throws ParserException Thrown if there is an issue writing to the output stream, or if any parser exceptions are
+     *                         thrown.
      */
-    OutputStream parse(String inputString, OutputStream outputStream) throws IOException
+    OutputStream parse(String inputString, OutputStream outputStream) throws ParserException
     {
         for (int i = 0; i < inputString.length(); i++)
         {
@@ -54,7 +55,15 @@ public class Parser
                     || inputString.charAt(i) == BrainfuckChar.OUTPUT_BYTE_AT_POINTER.getCharValue()
                     || inputString.charAt(i) == BrainfuckChar.INPUT_BYTE_TO_POINTER.getCharValue())
             {
-                outputStream.write(inputString.charAt(i));
+                try
+                {
+                    // Write the character to the output stream as it is valid and requires no further validation.
+                    outputStream.write(inputString.charAt(i));
+                }
+                catch (IOException e)
+                {
+                    throw new ParserException("Couldn't write character at position: " + i + " to output stream.");
+                }
             }
             else if (inputString.charAt(i) == BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getCharValue())
             {
@@ -104,20 +113,20 @@ public class Parser
                 {
                     // Throw an exception as there are more open bracket characters than closed bracket characters in
                     // the above loop.
-                    throw new IOException("Incorrect number of open brackets detected in loop: " + loopString);
+                    throw new ParserException("Incorrect number of open brackets detected in loop: " + loopString);
                 }
             }
             else if (inputString.charAt(i) == BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getCharValue())
             {
                 // Above case means this should never be reached with valid brackets. Throw an exception as there
                 // has been a closed bracket without a preceding open bracket.
-                throw new IOException("Invalid closed bracket detected at position " + i);
+                throw new ParserException("Invalid closed bracket detected at position " + i);
             }
             else
             {
                 // Throw an exception as the character is unrecognized, and the Parser only accepts valid Brainfuck
                 // characters.
-                throw new IOException("Invalid Brainfuck character detected: " + inputString.charAt(i));
+                throw new ParserException("Invalid Brainfuck character detected: " + inputString.charAt(i));
             }
         }
 
@@ -130,14 +139,21 @@ public class Parser
      * @param outputStream The output stream that created the loop.
      * @param loopOutputStream The loop output stream.
      * @return The loop output stream appended to the parent output stream.
-     * @throws IOException Thrown if there is an issue writing to an output stream.
+     * @throws ParserException Thrown if there is an issue writing to an output stream.
      */
     OutputStream appendLoopOutputToParserOutput(OutputStream outputStream, OutputStream loopOutputStream)
-            throws IOException
+            throws ParserException
     {
         ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream)loopOutputStream;
 
-        byteArrayOutputStream.writeTo(outputStream);
+        try
+        {
+            byteArrayOutputStream.writeTo(outputStream);
+        }
+        catch (IOException e)
+        {
+            throw new ParserException("Couldn't append loop output stream to parent output stream.", e.getCause());
+        }
 
         return outputStream;
     }
