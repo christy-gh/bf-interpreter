@@ -2,13 +2,13 @@ package lexer;
 
 import org.junit.Test;
 import utils.BrainfuckChar;
+import utils.HelperFunctions;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import static org.junit.Assert.*;
-import static utils.TestUtils.convertOutputStreamToString;
 
 public class LexerTest
 {
@@ -26,7 +26,7 @@ public class LexerTest
     {
         OutputStream outputStream =
                 lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_STRIPPED_BRAINFUCK_INPUT.getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, convertOutputStreamToString(outputStream));
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class LexerTest
     {
         OutputStream outputStream =
                 lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE.getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, convertOutputStreamToString(outputStream));
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class LexerTest
     {
         OutputStream outputStream =
                 lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_OTHER_CHARS.getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, convertOutputStreamToString(outputStream));
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class LexerTest
         OutputStream outputStream =
                 lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE_AND_OTHER_CHARS
                         .getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, convertOutputStreamToString(outputStream));
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
     }
 
     @Test
