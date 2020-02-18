@@ -2,6 +2,7 @@ package execution;
 
 import org.junit.Before;
 import org.junit.Test;
+import utils.HelperFunctions;
 import utils.TestUtils;
 
 import java.io.*;
@@ -10,14 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 public class ExecutorTest
 {
-    private static final String TWO_PLUS_FIVE_INPUT = "++>+++++[<+>-]++++++++[<++++++>-]<.";
-    private static final String TWO_PLUS_FIVE_EXPECTED_OUTPUT = "7";
-    private static final String TWO_PLUS_FIVE_FILENAME = "two_plus_five_executor_input.txt";
-    private static final String HELLO_WORLD_EXPECTED_OUTPUT = "Hello World!\n";
-    private static final String HELLO_WORLD_INPUT = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---."
-            + "+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
-    private static final String HELLO_WORLD_FILENAME = "hello_world_executor_input.txt";
-
     private static OutputStream mockOutputStream;
 
     private execution.Executor executor = new execution.Executor();
@@ -34,24 +27,24 @@ public class ExecutorTest
         ClassLoader classLoader = getClass().getClassLoader();
 
         try (FileInputStream fileInputStream =
-                     new FileInputStream(classLoader.getResource(TWO_PLUS_FIVE_FILENAME).getFile()))
+                     new FileInputStream(classLoader.getResource(TestUtils.TWO_PLUS_FIVE_FILENAME).getFile()))
         {
-            assertEquals(TWO_PLUS_FIVE_INPUT, executor.readInputStreamToString(fileInputStream));
+            assertEquals(TestUtils.TWO_PLUS_FIVE_INPUT, executor.readInputStreamToString(fileInputStream));
         }
 
         try (FileInputStream fileInputStream =
-                     new FileInputStream(classLoader.getResource(HELLO_WORLD_FILENAME).getFile()))
+                     new FileInputStream(classLoader.getResource(TestUtils.HELLO_WORLD_FILENAME).getFile()))
         {
-            assertEquals(HELLO_WORLD_INPUT, executor.readInputStreamToString(fileInputStream));
+            assertEquals(TestUtils.HELLO_WORLD_INPUT, executor.readInputStreamToString(fileInputStream));
         }
     }
 
     @Test
     public void testInterpretTwoPlusFiveInput() throws IOException
     {
-        try (OutputStream outputStream = executor.interpret(TWO_PLUS_FIVE_INPUT, mockOutputStream))
+        try (OutputStream outputStream = executor.interpret(TestUtils.TWO_PLUS_FIVE_INPUT, mockOutputStream))
         {
-            assertEquals(TWO_PLUS_FIVE_EXPECTED_OUTPUT, TestUtils.convertOutputStreamToString(outputStream));
+            assertEquals(TestUtils.TWO_PLUS_FIVE_EXPECTED_OUTPUT, HelperFunctions.convertOutputStreamToString(outputStream));
         }
     }
 
@@ -61,19 +54,19 @@ public class ExecutorTest
         ClassLoader classLoader = getClass().getClassLoader();
 
         try (FileInputStream fileInputStream =
-                     new FileInputStream(classLoader.getResource(TWO_PLUS_FIVE_FILENAME).getFile());
+                     new FileInputStream(classLoader.getResource(TestUtils.TWO_PLUS_FIVE_FILENAME).getFile());
              OutputStream output = executor.execute(fileInputStream, mockOutputStream))
         {
-            assertEquals(TWO_PLUS_FIVE_EXPECTED_OUTPUT, TestUtils.convertOutputStreamToString(output));
+            assertEquals(TestUtils.TWO_PLUS_FIVE_EXPECTED_OUTPUT, HelperFunctions.convertOutputStreamToString(output));
         }
     }
 
     @Test
     public void testInterpretHelloWorldInput() throws IOException
     {
-        try (OutputStream outputStream = executor.interpret(HELLO_WORLD_INPUT, mockOutputStream))
+        try (OutputStream outputStream = executor.interpret(TestUtils.HELLO_WORLD_INPUT, mockOutputStream))
         {
-            assertEquals(HELLO_WORLD_EXPECTED_OUTPUT, TestUtils.convertOutputStreamToString(outputStream));
+            assertEquals(TestUtils.HELLO_WORLD_EXPECTED_OUTPUT, HelperFunctions.convertOutputStreamToString(outputStream));
         }
     }
 
@@ -83,10 +76,10 @@ public class ExecutorTest
         ClassLoader classLoader = getClass().getClassLoader();
 
         try (FileInputStream fileInputStream =
-                     new FileInputStream(classLoader.getResource(HELLO_WORLD_FILENAME).getFile());
+                     new FileInputStream(classLoader.getResource(TestUtils.HELLO_WORLD_FILENAME).getFile());
              OutputStream output = executor.execute(fileInputStream, mockOutputStream))
         {
-            assertEquals(HELLO_WORLD_EXPECTED_OUTPUT, TestUtils.convertOutputStreamToString(output));
+            assertEquals(TestUtils.HELLO_WORLD_EXPECTED_OUTPUT, HelperFunctions.convertOutputStreamToString(output));
         }
     }
 }

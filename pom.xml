@@ -18,6 +18,7 @@
         <module>parser</module>
         <module>transpiler</module>
         <module>core</module>
+        <module>testutils</module>
     </modules>
 
 

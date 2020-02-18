@@ -3,10 +3,7 @@ package utils;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
-/**
- * Class containing utility code shared across multiple modules for tests, reducing duplicate code.
- */
-public class TestUtils
+public class HelperFunctions
 {
     /**
      * Converts an output stream to a string to compare with the expected value.
