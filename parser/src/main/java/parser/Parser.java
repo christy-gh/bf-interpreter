@@ -12,6 +12,13 @@ import java.io.OutputStream;
  */
 public class Parser
 {
+    static final String PARSER_EXCEPTION_DISCREPENCY_MSG = "Parsed output did not match input.";
+    static final String PARSER_EXCEPTION_WRITE_CHAR_MSG = "Couldn't write character at position: ";
+    static final String PARSER_EXCEPTION_WRITE_SUBSTRING_MSG = "Couldn't write sub string: ";
+    static final String PARSER_EXCEPTION_INVALID_OPEN_BRACKETS_MSG = "Incorrect number of open brackets detected in loop: ";
+    static final String PARSER_EXCEPTION_INVALID_CLOSED_BRACKETS_MSG = "Invalid closed bracket detected at position: ";
+    static final String PARSER_EXCEPTION_INVALID_CHAR_MSG = "Invalid closed bracket detected at position: ";
+
     /**
      * Check if the input is valid.
      *
@@ -31,7 +38,7 @@ public class Parser
         }
         else
         {
-            throw new ParserException("Parsed output did not match input.");
+            throw new ParserException(PARSER_EXCEPTION_DISCREPENCY_MSG);
         }
     }
 
@@ -62,23 +69,21 @@ public class Parser
                 }
                 catch (IOException e)
                 {
-                    throw new ParserException("Couldn't write character at position: " + i + " to output stream.");
+                    throw new ParserException(PARSER_EXCEPTION_WRITE_CHAR_MSG + i);
                 }
             }
             else if (inputString.charAt(i) == BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getCharValue())
             {
                 // Set a bracket index to the current index + 1;
-                int bracketIndex = i + 1;
+                int bracketIndex = i;
 
                 // Set the number of unmatched brackets to 1;
                 int unmatchedBrackets = 1;
 
-                // While there are still unmatched brackets:
-                while (unmatchedBrackets > 0 && bracketIndex > inputString.length() - 2)
+                // While the next character (++ needed here) has not surpassed the end of the input string and there
+                // are still unmatched brackets:
+                while (++bracketIndex < inputString.length() && unmatchedBrackets > 0)
                 {
-                    // Increment the bracket index by 1.
-                    bracketIndex++;
-
                     // If the character at the bracketIndex is '[':
                     if (inputString.charAt(bracketIndex) == BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getCharValue())
                     {
@@ -98,61 +103,41 @@ public class Parser
                 String loopString = inputString.substring(i, bracketIndex);
 
                 // If there are no more unmatched brackets:
-                if (unmatchedBrackets != 0)
+                if (unmatchedBrackets == 0)
                 {
-                    // Parse the loop string.
-                    OutputStream loopOutputStream = parse(loopString, outputStream);
+                    try
+                    {
+                        // Append the loop string to the parser output.
+                        outputStream.write(loopString.getBytes());
+                    }
+                    catch (IOException e)
+                    {
+                        throw new ParserException(PARSER_EXCEPTION_WRITE_SUBSTRING_MSG + loopString);
+                    }
 
-                    // Append output of above to current output stream.
-                    outputStream = appendLoopOutputToParserOutput(outputStream, loopOutputStream);
-
-                    // Set the index to the end of the loop, which causes the parent parse to skip it.
-                    i = bracketIndex;
+                    // Set the index to the end of the loop, which causes the parent parse to skip it. -- Here is needed
+                    // as bracket index is one character after the loop string's last character (']').
+                    i = --bracketIndex;
                 }
                 else
                 {
                     // Throw an exception as there are more open bracket characters than closed bracket characters in
                     // the above loop.
-                    throw new ParserException("Incorrect number of open brackets detected in loop: " + loopString);
+                    throw new ParserException(PARSER_EXCEPTION_INVALID_OPEN_BRACKETS_MSG + loopString);
                 }
             }
             else if (inputString.charAt(i) == BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getCharValue())
             {
                 // Above case means this should never be reached with valid brackets. Throw an exception as there
                 // has been a closed bracket without a preceding open bracket.
-                throw new ParserException("Invalid closed bracket detected at position " + i);
+                throw new ParserException(PARSER_EXCEPTION_INVALID_CLOSED_BRACKETS_MSG + i);
             }
             else
             {
                 // Throw an exception as the character is unrecognized, and the Parser only accepts valid Brainfuck
                 // characters.
-                throw new ParserException("Invalid Brainfuck character detected: " + inputString.charAt(i));
+                throw new ParserException(PARSER_EXCEPTION_INVALID_CHAR_MSG + inputString.charAt(i));
             }
-        }
-
-        return outputStream;
-    }
-
-    /**
-     * Appends the loop output to the current output stream.
-     *
-     * @param outputStream The output stream that created the loop.
-     * @param loopOutputStream The loop output stream.
-     * @return The loop output stream appended to the parent output stream.
-     * @throws ParserException Thrown if there is an issue writing to an output stream.
-     */
-    OutputStream appendLoopOutputToParserOutput(OutputStream outputStream, OutputStream loopOutputStream)
-            throws ParserException
-    {
-        ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream)loopOutputStream;
-
-        try
-        {
-            byteArrayOutputStream.writeTo(outputStream);
-        }
-        catch (IOException e)
-        {
-            throw new ParserException("Couldn't append loop output stream to parent output stream.", e.getCause());
         }
 
         return outputStream;
