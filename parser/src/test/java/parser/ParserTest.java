@@ -9,8 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ParserTest
 {
@@ -21,6 +20,18 @@ public class ParserTest
     public void setup()
     {
         mockOutputStream = new ByteArrayOutputStream();
+    }
+
+    @Test
+    public void testIsValidTwoPlusFiveInput() throws ParserException
+    {
+        assertTrue(parser.isInputValidBrainfuck(TestUtils.TWO_PLUS_FIVE_INPUT));
+    }
+
+    @Test
+    public void testIsValidHelloWorldInput() throws ParserException
+    {
+        assertTrue(parser.isInputValidBrainfuck(TestUtils.HELLO_WORLD_INPUT));
     }
 
     @Test
@@ -46,14 +57,54 @@ public class ParserTest
     @Test
     public void testParseInvalidCharInput() throws IOException
     {
-        String invalidCharString = "1+1=2";
-        try (OutputStream outputStream = parser.parse(invalidCharString, mockOutputStream))
+        // Position 0:
+        String invalidInput = "1+1=2";
+        parseExpectFail(invalidInput, Parser.PARSER_EXCEPTION_INVALID_CHAR_MSG, String.valueOf(invalidInput.charAt(0)));
+
+        // Later position:
+        invalidInput = "++>++.-.Q-++";
+        parseExpectFail(invalidInput, Parser.PARSER_EXCEPTION_INVALID_CHAR_MSG, String.valueOf(invalidInput.charAt(8)));
+    }
+
+    @Test
+    public void testParseInvalidBracketMatchCount() throws IOException
+    {
+        // Too many open brackets:
+        String invalidInput = "++[++[++]++";
+        parseExpectFail(invalidInput, Parser.PARSER_EXCEPTION_INVALID_OPEN_BRACKETS_MSG, invalidInput.substring(2));
+
+        // Too many closed brackets:
+        invalidInput = "++[++]++]++";
+        parseExpectFail(invalidInput, Parser.PARSER_EXCEPTION_INVALID_CLOSED_BRACKETS_MSG, "8");
+    }
+
+    @Test
+    public void testParseInvalidBracketPosition() throws IOException
+    {
+        // Closed bracket before all open brackets:
+        String invalidInput = "++]++[++[++]++";
+        parseExpectFail(invalidInput, Parser.PARSER_EXCEPTION_INVALID_CLOSED_BRACKETS_MSG, "2");
+
+        // Open bracket after all closing brackets:
+        invalidInput = "++[++]++]++[++";
+        parseExpectFail(invalidInput, Parser.PARSER_EXCEPTION_INVALID_CLOSED_BRACKETS_MSG, "8");
+    }
+
+    // TODO: Add mockito tests for throwing output stream writing exceptions.
+
+    /**
+     * Parse the input expecting an exception with the expected message that highlights the info (char/substring/index)
+     * responsible at the end.
+     */
+    private void parseExpectFail(String input, String expectedExceptionMessage, String extraInfo) throws IOException
+    {
+        try (OutputStream outputStream = parser.parse(input, mockOutputStream))
         {
             fail(TestUtils.EXCEPTION_EXPECTED_MSG);
         }
         catch (ParserException e)
         {
-            assertEquals(Parser.PARSER_EXCEPTION_INVALID_CHAR_MSG + invalidCharString.charAt(0), e.getMessage());
+            assertEquals(expectedExceptionMessage + extraInfo, e.getMessage());
         }
     }
 }

@@ -12,10 +12,10 @@ import java.io.OutputStream;
  */
 public class Parser
 {
-    static final String PARSER_EXCEPTION_DISCREPENCY_MSG = "Parsed output did not match input.";
     static final String PARSER_EXCEPTION_WRITE_CHAR_MSG = "Couldn't write character at position: ";
     static final String PARSER_EXCEPTION_WRITE_SUBSTRING_MSG = "Couldn't write sub string: ";
-    static final String PARSER_EXCEPTION_INVALID_OPEN_BRACKETS_MSG = "Incorrect number of open brackets detected in loop: ";
+    static final String PARSER_EXCEPTION_INVALID_OPEN_BRACKETS_MSG =
+            "Incorrect number of open brackets detected in loop: ";
     static final String PARSER_EXCEPTION_INVALID_CLOSED_BRACKETS_MSG = "Invalid closed bracket detected at position: ";
     static final String PARSER_EXCEPTION_INVALID_CHAR_MSG = "Invalid closed bracket detected at position: ";
 
@@ -23,7 +23,8 @@ public class Parser
      * Check if the input is valid.
      *
      * @param inputString The input string.
-     * @return True if there were no errors parsing the
+     * @return True if there were no exceptions parsing the input and the parsed output matched the input, false if
+     *         there were no exceptions and the parsed output did not match the input.
      * @throws ParserException Thrown if an exception is encountered when parsing or if the parsed output doesn't match
      *                         the input.
      */
@@ -31,15 +32,8 @@ public class Parser
     {
         OutputStream parsedOutputStream = parse(inputString, new ByteArrayOutputStream());
 
-        // If the parsed output stream was equal to the input stream, return true. Otherwise, throw an exception.
-        if (inputString.equals(HelperFunctions.convertOutputStreamToString(parsedOutputStream)))
-        {
-            return true;
-        }
-        else
-        {
-            throw new ParserException(PARSER_EXCEPTION_DISCREPENCY_MSG);
-        }
+        // If the parsed output stream was equal to the input stream, return true. Otherwise, return false.
+        return inputString.equals(HelperFunctions.convertOutputStreamToString(parsedOutputStream));
     }
 
     /**
