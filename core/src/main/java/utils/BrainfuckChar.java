@@ -3,7 +3,7 @@ package utils;
 /**
  * Enum for Brainfuck characters, primarily for readability.
  */
-public enum BrainfuckChar
+public enum BrainfuckChar implements LanguageChar
 {
     INC_POINTER('>'),
     DEC_POINTER('<'),
@@ -42,6 +42,7 @@ public enum BrainfuckChar
      *
      * @return The char value of the enum entry.
      */
+    @Override
     public char getCharValue()
     {
         return value;
@@ -52,6 +53,7 @@ public enum BrainfuckChar
      *
      * @return The byte value of an enum entry char.
      */
+    @Override
     public byte getByteValue()
     {
         return (byte)value;

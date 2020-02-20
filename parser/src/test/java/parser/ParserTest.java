@@ -2,12 +2,15 @@ package parser;
 
 import org.junit.Before;
 import org.junit.Test;
+import tokens.Token;
+import utils.BrainfuckChar;
 import utils.HelperFunctions;
 import utils.TestUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -25,13 +28,17 @@ public class ParserTest
     @Test
     public void testIsValidTwoPlusFiveInput() throws ParserException
     {
-        assertTrue(parser.isInputValidBrainfuck(TestUtils.TWO_PLUS_FIVE_INPUT));
+        List<Token> tokenInput =
+                HelperFunctions.convertStringToTokens(TestUtils.TWO_PLUS_FIVE_INPUT, BrainfuckChar.class);
+        assertTrue(parser.isInputValidBrainfuck(tokenInput));
     }
 
     @Test
     public void testIsValidHelloWorldInput() throws ParserException
     {
-        assertTrue(parser.isInputValidBrainfuck(TestUtils.HELLO_WORLD_INPUT));
+        List<Token> tokenInput =
+                HelperFunctions.convertStringToTokens(TestUtils.HELLO_WORLD_INPUT, BrainfuckChar.class);
+        assertTrue(parser.isInputValidBrainfuck(tokenInput));
     }
 
     @Test

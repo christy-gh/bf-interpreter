@@ -1,18 +1,18 @@
 package lexer;
 
+import org.junit.Before;
 import org.junit.Test;
+import tokens.Token;
 import utils.BrainfuckChar;
-import utils.HelperFunctions;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class LexerTest
 {
-    private Lexer lexer = new Lexer();
+    private Lexer<BrainfuckChar> lexer;
 
     // TODO: Change chars to actual enum values.
     private final String VALID_STRIPPED_BRAINFUCK_INPUT = "><+-.,[]";
@@ -21,50 +21,63 @@ public class LexerTest
     private final String VALID_INPUT_WITH_WHITESPACE_AND_OTHER_CHARS =
             " \t\n  ! 1   q>  @2   w<#3e  \n+$4r-%5t.^6y ,&7u[*8i]  (9o     \t";
 
-    @Test
-    public void testLexerValidStrippedInput() throws IOException
+    @Before
+    public void setup()
     {
-        OutputStream outputStream =
-                lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_STRIPPED_BRAINFUCK_INPUT.getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
+        lexer = new Lexer<>(BrainfuckChar.class);
+    }
+    @Test
+    public void testLexerValidStrippedInput() throws LexerException
+    {
+        List<Token> tokens = lexer.stripIllegalChars(new ByteArrayInputStream(VALID_STRIPPED_BRAINFUCK_INPUT.getBytes()));
+        validateTokens(tokens);
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT.length(), tokens.size());
     }
 
     @Test
-    public void testLexerValidInputStringWithSpaces() throws IOException
+    public void testLexerValidInputStringWithSpaces() throws LexerException
     {
-        OutputStream outputStream =
-                lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE.getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
+        List<Token> tokens = lexer.stripIllegalChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE.getBytes()));
+        validateTokens(tokens);
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT.length(), tokens.size());
     }
 
     @Test
-    public void testLexerValidInputStringWithOtherChars() throws IOException
+    public void testLexerValidInputStringWithOtherChars() throws LexerException
     {
-        OutputStream outputStream =
-                lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_OTHER_CHARS.getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
+        List<Token> tokens = lexer.stripIllegalChars(new ByteArrayInputStream(VALID_INPUT_WITH_OTHER_CHARS.getBytes()));
+        validateTokens(tokens);
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT.length(), tokens.size());
     }
 
     @Test
-    public void testLexerValidInputStringWithWhiteSpaceAndOtherChars() throws IOException
+    public void testLexerValidInputStringWithWhiteSpaceAndOtherChars() throws LexerException
     {
-        OutputStream outputStream =
-                lexer.stripNonBrainfuckChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE_AND_OTHER_CHARS
-                        .getBytes()));
-        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT, HelperFunctions.convertOutputStreamToString(outputStream));
+        List<Token> tokens = lexer.stripIllegalChars(new ByteArrayInputStream(VALID_INPUT_WITH_WHITESPACE_AND_OTHER_CHARS.getBytes()));
+        validateTokens(tokens);
+        assertEquals(VALID_STRIPPED_BRAINFUCK_INPUT.length(), tokens.size());
     }
 
     @Test
     public void testLexerValidChars()
     {
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INC_POINTER.getCharValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.DEC_POINTER.getCharValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INC_BYTE_AT_POINTER.getCharValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.DEC_BYTE_AT_POINTER.getCharValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.OUTPUT_BYTE_AT_POINTER.getCharValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.INPUT_BYTE_TO_POINTER.getCharValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getCharValue()));
-        assertTrue(lexer.isValidBrainfuckChar(BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getCharValue()));
+        assertEquals(BrainfuckChar.INC_POINTER, lexer.getLanguageChar(BrainfuckChar.INC_POINTER.getCharValue(),
+                BrainfuckChar.class));
+        assertEquals(BrainfuckChar.DEC_POINTER, lexer.getLanguageChar(BrainfuckChar.DEC_POINTER.getCharValue(),
+                BrainfuckChar.class));
+        assertEquals(BrainfuckChar.INC_BYTE_AT_POINTER,
+                lexer.getLanguageChar(BrainfuckChar.INC_BYTE_AT_POINTER.getCharValue(), BrainfuckChar.class));
+        assertEquals(BrainfuckChar.DEC_BYTE_AT_POINTER,
+                lexer.getLanguageChar(BrainfuckChar.DEC_BYTE_AT_POINTER.getCharValue(), BrainfuckChar.class));
+        assertEquals(BrainfuckChar.OUTPUT_BYTE_AT_POINTER,
+                lexer.getLanguageChar(BrainfuckChar.OUTPUT_BYTE_AT_POINTER.getCharValue(), BrainfuckChar.class));
+        assertEquals(BrainfuckChar.INPUT_BYTE_TO_POINTER,
+                lexer.getLanguageChar(BrainfuckChar.INPUT_BYTE_TO_POINTER.getCharValue(), BrainfuckChar.class));
+        assertEquals(BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO,
+                lexer.getLanguageChar(BrainfuckChar.JUMP_FORWARD_IF_BYTE_IS_ZERO.getCharValue(), BrainfuckChar.class));
+        assertEquals(BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO,
+                lexer.getLanguageChar(BrainfuckChar.JUMP_BACKWARD_IF_BYTE_IS_NOT_ZERO.getCharValue(),
+                        BrainfuckChar.class));
     }
 
     @Test
@@ -87,7 +100,26 @@ public class LexerTest
                 }
             }
 
-            assertEquals(isLegal, lexer.isValidBrainfuckChar((char)b));
+            if (isLegal)
+            {
+                assertNotNull(lexer.getLanguageChar((char)b, BrainfuckChar.class));
+            }
+            else
+            {
+                assertNull(lexer.getLanguageChar((char)b, BrainfuckChar.class));
+            }
+        }
+    }
+
+    private void validateTokens(List<Token> tokens)
+    {
+        assertNotNull(tokens);
+        assertTrue(tokens.size() > 0);
+
+        for (Token token : tokens)
+        {
+            BrainfuckChar brainfuckChar = BrainfuckChar.valueOf(token.getName());
+            assertEquals(brainfuckChar.getCharValue(), token.getCharacter());
         }
     }
 }
