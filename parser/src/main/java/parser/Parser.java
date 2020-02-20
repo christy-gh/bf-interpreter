@@ -1,11 +1,13 @@
 package parser;
 
+import tokens.Token;
 import utils.BrainfuckChar;
 import utils.HelperFunctions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Class for parsing valid Brainfuck input.
@@ -22,18 +24,32 @@ public class Parser
     /**
      * Check if the input is valid.
      *
-     * @param inputString The input string.
+     * @param tokens The input tokens.
      * @return True if there were no exceptions parsing the input and the parsed output matched the input, false if
      *         there were no exceptions and the parsed output did not match the input.
      * @throws ParserException Thrown if an exception is encountered when parsing or if the parsed output doesn't match
      *                         the input.
      */
-    boolean isInputValidBrainfuck(String inputString) throws ParserException
+    boolean isInputValidBrainfuck(List<Token> tokens) throws ParserException
     {
-        OutputStream parsedOutputStream = parse(inputString, new ByteArrayOutputStream());
+        String tokenString = "";
 
-        // If the parsed output stream was equal to the input stream, return true. Otherwise, return false.
-        return inputString.equals(HelperFunctions.convertOutputStreamToString(parsedOutputStream));
+        // Iterate through the tokens and create a string of their characters.
+        for (Token token : tokens) {
+            tokenString = tokenString.concat(String.valueOf(token.getCharacter()));
+        }
+
+        OutputStream parsedOutputStream = parse(tokenString, new ByteArrayOutputStream());
+
+        // Check if the output from parse matches the char values of the tokens. If no match, throw an exception.
+        if (tokenString.equals(HelperFunctions.convertOutputStreamToString(parsedOutputStream)))
+        {
+            return true;
+        }
+        else
+        {
+            throw new ParserException("Parsed output did not match token char input.");
+        }
     }
 
     /**

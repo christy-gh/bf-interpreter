@@ -1,16 +1,16 @@
-package parser;
+package lexer;
 
 /**
- * Wrapper class for exceptions encountered in the parser.
+ * Wrapper class for exceptions encountered in the lexer.
  */
-public class ParserException extends Exception
+public class LexerException extends Exception
 {
     /**
      * Constructor.
      *
      * @param message The exception message.
      */
-    ParserException(String message)
+    LexerException(String message)
     {
         super(message);
     }
@@ -21,7 +21,7 @@ public class ParserException extends Exception
      * @param message The exception message.
      * @param cause   The cause of the exception.
      */
-    ParserException(String message, Throwable cause)
+    LexerException(String message, Throwable cause)
     {
         super(message, cause);
     }

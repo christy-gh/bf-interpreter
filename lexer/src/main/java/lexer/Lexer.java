@@ -1,30 +1,38 @@
 package lexer;
 
-import utils.BrainfuckChar;
+import tokens.Token;
+import utils.HelperFunctions;
+import utils.LanguageChar;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Lexer class that takes in an input stream anD ignores all whitespace and non Brainfuck recognized characters
  * (as dictated by BrainfuckChar), returning the result as an output stream.
  */
-class Lexer
+class Lexer<T extends Enum<T> & LanguageChar>
 {
+    private Class<T> languageCharSetClass;
+    private List<Token> tokens = new ArrayList<>();
+
+    Lexer(Class<T> languageCharSetClass)
+    {
+        this.languageCharSetClass = languageCharSetClass;
+    }
+
     /**
      * Strips any characters not recognized by Brainfuck (as dictated by the BrainfuckChar enum), and returns a
      * legal output for use by the Parser.
      *
      * @param inputStream The input stream provided to the Lexer.
      * @return An Outputstream with the only legal characters.
-     * @throws IOException Thrown if there is an issue reading from or closing the input stream.
+     * @throws LexerException Thrown if there is an issue reading from or closing the input stream.
      */
-    OutputStream stripNonBrainfuckChars(InputStream inputStream) throws IOException
+    List<Token> stripIllegalChars(InputStream inputStream) throws LexerException
     {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
         byte[] buffer = new byte[1024];
         int read;
 
@@ -36,37 +44,31 @@ class Lexer
                 // Iterate through each byte that was read in the buffer.
                 for (int i = 0; i < read; i++)
                 {
-                    // Cast the current byte read into the buffer to a char.
-                    char currentChar = (char)buffer[i];
-
-                    // If the char is a valid Brainfuck char, write the byte to the output stream.
-                    if (isValidBrainfuckChar(currentChar))
-                    {
-                        outputStream.write(buffer[i]);
-                    }
+                    // If the char is a valid Brainfuck char, create a token and add it to the list of returned tokens.
+                    processChar((char)buffer[i]);
                 }
             }
         }
-
-        return outputStream;
-    }
-
-    /**
-     * Checks if the given character is a valid Brainfuck character (as dictated by the BrainfuckChar enum).
-     *
-     * @param currentChar The current char.
-     * @return True if the char is recognized, false if not.
-     */
-    boolean isValidBrainfuckChar(char currentChar)
-    {
-        for (BrainfuckChar brainfuckChar : BrainfuckChar.values())
+        catch (IOException e)
         {
-            if (brainfuckChar.equals(currentChar))
-            {
-                return true;
-            }
+            throw new LexerException("Couldn't read or close from the input stream.", e);
         }
 
-        return false;
+        return tokens;
+    }
+
+    private void processChar(char inputChar)
+    {
+        T languageChar = getLanguageChar(inputChar, languageCharSetClass);
+
+        if (languageChar != null)
+        {
+            tokens.add(HelperFunctions.charToToken(languageChar));
+        }
+    }
+
+    T getLanguageChar(char inputChar, Class<T> languageCharSetClass)
+    {
+        return HelperFunctions.charToLanguageChar(inputChar, languageCharSetClass);
     }
 }
